@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://adexabc.com/sitemap.xml

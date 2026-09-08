@@ -1,0 +1,34 @@
+name: Deploy site to GitHub Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch hero film if not committed
+        run: |
+          if [ ! -f site/assets/hero.mp4 ]; then
+            curl -fsSL -o site/assets/hero.mp4 "$HERO_MP4_URL"
+          fi
+          ls -l site/assets/hero.mp4
+        env:
+          HERO_MP4_URL: https://d2ol7oe51mr4n9.cloudfront.net/user_3IzTMPoiI8XqLAjfzQY4iOfnuZt/f3b079ce-7012-42f4-ad1c-dac0a1dec5db.mp4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4
