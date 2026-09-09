@@ -432,7 +432,7 @@ footer .legal{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);
   /* hero film: only where it makes sense */
   const hv=document.querySelector('.hero video');
   if(hv){const s=hv.querySelector('source');const conn=navigator.connection||{};const small=matchMedia('(max-width:700px)').matches;
-    if(!reduce&&!conn.saveData&&!small&&s&&s.dataset.src){s.src=s.dataset.src;hv.load();hv.addEventListener('playing',()=>hv.classList.add('on'));hv.play().catch(()=>{});}
+    if(!reduce&&!conn.saveData&&!small&&s&&s.dataset.src){s.src=s.dataset.src;hv.muted=true;hv.defaultMuted=true;hv.load();let tries=0;const tryPlay=()=>{if(!hv.paused)return;const p=hv.play();if(p&&p.catch)p.catch(()=>{});};hv.addEventListener('playing',()=>hv.classList.add('on'));hv.addEventListener('pause',()=>{if(hv.ended)return;hv.classList.remove('on');if(tries++<6)setTimeout(tryPlay,900);});hv.addEventListener('canplay',tryPlay);document.addEventListener('visibilitychange',()=>{if(!document.hidden)tryPlay();});['pointerdown','keydown','touchstart','scroll','wheel'].forEach(e=>addEventListener(e,tryPlay,{passive:true}));tryPlay();}
     else{hv.remove();}}
   /* reveal */
   if(!reduce&&'IntersectionObserver'in window){const els=[...document.querySelectorAll('section .wrap > *')];els.forEach(e=>{e.classList.add('rv');if(e.getBoundingClientRect().top>innerHeight)e.classList.add('pre')});const io=new IntersectionObserver(en=>en.forEach(x=>{if(x.isIntersecting){x.target.classList.remove('pre');io.unobserve(x.target)}}),{threshold:.06});els.forEach(e=>io.observe(e));setTimeout(()=>els.forEach(e=>e.classList.remove('pre')),3000)}
